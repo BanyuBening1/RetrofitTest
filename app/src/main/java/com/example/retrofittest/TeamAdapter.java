@@ -14,11 +14,11 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder> {
-    private List<Team> teams;
+    private List<Team> teamList;
 
 
     public TeamAdapter(List<Team> teams) {
-        this.teams = teams;
+        this.teamList = teams;
     }
 
 
@@ -32,7 +32,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TeamViewHolder holder, int position) {
-        Team team = teams.get(position);
+        Team team = teamList.get(position);
         holder.name.setText(team.getTeamName());
         holder.stadium.setText(team.getStadium());
         holder.shortName.setText(team.getShortName());
@@ -41,7 +41,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
 
     @Override
     public int getItemCount() {
-        return teams.size();
+        return teamList.size();
     }
 
     public static class TeamViewHolder extends RecyclerView.ViewHolder {
