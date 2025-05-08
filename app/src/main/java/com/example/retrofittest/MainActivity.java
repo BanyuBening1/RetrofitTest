@@ -24,30 +24,29 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String leagueName = getIntent().getStringExtra("LEAGUE");
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        pbLoading = findViewById(R.id.pbLoading);
-        rvTeam = findViewById(R.id.rvTeam);
+        pbLoading = (ProgressBar) findViewById(R.id.pbLoading);
+        rvTeam = (RecyclerView) findViewById(R.id.rvTeam);
         rvTeam.setLayoutManager(new LinearLayoutManager(this));
 
-        String leagueName = getIntent().getStringExtra("LEAGUE");
-        TeamAPI api = RetrofitClient.getInstance().create(TeamAPI.class);
+        TeamAPI api = RetrofitClient.getClient().create(TeamAPI.class);
 
-        if ("LALIGA".equals(leagueName)) {
-            fetchLaligaTeams(api);
-        } else if ("EPL".equals(leagueName)) {
+        if (leagueName.equals("LALIGA")) {
             fetchEnglishPremierLeagueTeams(api);
-        } else {
-            Toast.makeText(this, "Invalid league name", Toast.LENGTH_SHORT).show();
+        } else if (leagueName.equals("EPL")) {
+            fetchLaligaTeams(api);
         }
     }
 
     private void fetchLaligaTeams(TeamAPI api) {
-        api.getLaliga("Spanish La Liga").enqueue(new Callback<Response>() {
+        api.getPremier("English Premier League").enqueue(new Callback<TeamResponse>() {
             @Override
-            public void onResponse(Call<Response> call, Response<Response> response) {
+            public void onResponse(Call<TeamResponse> call, Response<TeamResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Team> teams = response.body().getTeams();
                     teamAdapter = new TeamAdapter(teams);
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Response> call, Throwable t) {
+            public void onFailure(Call<TeamResponse> call, Throwable t) {
                 Log.e("API_ERROR", t.getMessage());
                 Toast.makeText(MainActivity.this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
             }
@@ -66,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchEnglishPremierLeagueTeams(TeamAPI api) {
-        api.getTeams("English Premier League").enqueue(new Callback<Response>() {
+        api.getLaliga("Spanish La Liga").enqueue(new Callback<TeamResponse>() {
             @Override
-            public void onResponse(Call<Response> call, Response<Response> response) {
+            public void onResponse(Call<TeamResponse> call, Response<TeamResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Team> teams = response.body().getTeams();
                     teamAdapter = new TeamAdapter(teams);
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Response> call, Throwable t) {
+            public void onFailure(Call<TeamResponse> call, Throwable t) {
                 Log.e("API_ERROR", t.getMessage());
                 Toast.makeText(MainActivity.this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
             }
